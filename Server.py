@@ -9,11 +9,16 @@ class KodeFunHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     # handle GET command
     def do_GET(self):
         try:
+            index = int(re.search("<(.+?)>",self.requestline).group(1))
+
+            str = "messegaes"
+            for i in range(index,messeges.__len__()):
+                str += "\n"
+                str += messeges.__getitem__(i)
             # send code 200 response
-            self.send_response(200,"Hi")
+            self.send_response(200,str)
             self.send_header('Content-type', 'tex')
             self.end_headers()
-            print("connection start")
             return
 
         except IOError:
@@ -23,13 +28,15 @@ class KodeFunHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             print("recieved " + self.requestline)
+            data = re.search("POST (.+?)", self.requestline).group(1)
+
             # send code 200 response
             self.send_response(200,"Hi")
             # send header first
             self.send_header('Content-type', 'tex')
             self.end_headers()
 
-
+            name = re.search("_(.+?)_", self.requestline).group(1)
             messeges.append(re.search("<(.+?)>",self.requestline).group(1))
             for messege  in messeges:
                 print(messege)
