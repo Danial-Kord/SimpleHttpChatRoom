@@ -13,8 +13,9 @@ class KodeFunHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
             str = "messegaes"
             for i in range(index,messeges.__len__()):
-                str += "\n"
+                str += ","
                 str += messeges.__getitem__(i)
+            str.replace(" ","_")
             # send code 200 response
             self.send_response(200,str)
             self.send_header('Content-type', 'tex')
@@ -28,7 +29,15 @@ class KodeFunHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         try:
             print("recieved " + self.requestline)
-            data = re.search("POST (.+?)", self.requestline).group(1)
+
+            data = self.requestline
+
+
+            data = re.search("POST (.+?) HTTP", data).group(1)
+            data = bytes(data, 'utf-8')
+            data = data.decode('utf-8')
+            print(str(data))
+            data = data.replace('-',' ')
 
             # send code 200 response
             self.send_response(200,"Hi")
@@ -36,8 +45,9 @@ class KodeFunHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
             self.send_header('Content-type', 'tex')
             self.end_headers()
 
-            name = re.search("_(.+?)_", self.requestline).group(1)
-            messeges.append(re.search("<(.+?)>",self.requestline).group(1))
+            name = re.search("_(.+?)_", data).group(1)
+            data = name +" : " + re.search("<(.+?)>",data).group(1)
+            messeges.append(data)
             for messege  in messeges:
                 print(messege)
             print("wtf")
